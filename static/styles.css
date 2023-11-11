@@ -23,6 +23,11 @@ body, h1, p {
 }
 
 /* Style the input group */
+
+.chatbot-heading{
+    font-size: 2em;
+    color: #333;
+}
 .input-group {
     display: flex;
     margin-bottom: 20px;

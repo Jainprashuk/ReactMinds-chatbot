@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        /* Your CSS styles go here */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        form {
+            margin-top: 20px;
+        }
+        #response {
+            margin-top: 20px;
+        }
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <form method="POST" action="/ask">
+        <input type="text" name="user_input" placeholder="Ask a question...">
+        <button type="submit">Ask</button>
+    </form>
+
+    <!-- Chatbot responses will be displayed here -->
+    <div id="response">
+        {% if user_input %}
+            <div>
+                <p><strong>User:</strong> {{ user_input }}</p>
+                <p><strong>ChatBot:</strong> {{ response }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Voice input data will be displayed here -->
+    <div id="voice-input-data">
+        <!-- JSON data will be populated here using JavaScript -->
+    </div>
+
+    <form method="POST" action="/toggle_audio">
+        <button type="submit" id="toggle-audio-button">Toggle Audio</button>
+    </form>
+    <form method="POST" action="/voice_input">
+        <button type="submit" id="voice-input-button">Voice Input</button>
+    </form>
+    <audio id="audio-element" preload="auto">
+        <source src="" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        // Your JavaScript code goes here
+        document.querySelector('#voice-input-button').addEventListener('click', function (e) {
+            e.preventDefault();
+            // Remove the "Listening for voice input..." line
+            document.querySelector('#response').textContent = "Listening for voice input...";
+
+            // Make a POST request to initiate voice input
+            fetch('/voice_input', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json()) // Parse the response as JSON
+            .then(data => {
+                // Remove the "Listening for voice input..." line when a response is received
+                document.querySelector('#response').textContent = "";
+
+                // Update the voice input data div with the user input and response
+                const voiceInputDataDiv = document.querySelector('#voice-input-data');
+                voiceInputDataDiv.innerHTML = `
+                    <p>User Input: ${data.user_input}</p>
+                    <p>Response: ${data.response}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>

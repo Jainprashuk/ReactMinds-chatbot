@@ -1,0 +1,86 @@
+/* Reset some default styles */
+body, h1, p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Apply a modern style to the container */
+.chatbot-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the header */
+.chatbot-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Style the input group */
+.input-group {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+/* Style the input field */
+#user_input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Style the buttons */
+.chatbot-button, .ask-button, #voice_input_button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Change button color on hover */
+.chatbot-button:hover, .ask-button:hover, #voice_input_button:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Style the chat messages */
+.chat {
+    margin-top: 20px;
+}
+
+.user-message, .bot-message {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.user-message {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.bot-message {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 600px) {
+    .input-group {
+        flex-direction: column;
+    }
+    #user_input {
+        margin-bottom: 10px;
+    }
+}

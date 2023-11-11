@@ -1,0 +1,288 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>ChatBot</title>
+  <style>
+    /* CSS styles go here */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #chatbot {
+      width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #user_input {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    #ask-button,
+    #voice_input_button,
+    #speaker_button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #speaker_button {
+      display: block;
+      margin: 0 auto;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    #speaker_text {
+      display: block;
+      margin-top: 10px;
+    }
+
+    #response {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbot">
+    <h1>ChatBot</h1>
+    <form action="/ask" method="POST" id="ask-form">
+      <input type="text" name="user_input" id="user_input" placeholder="Ask a question...">
+      <button type="submit" id="ask-button">Ask</button>
+      <button type="button" id="voice_input_button">Voice Input</button>
+      <button type="button" id="speaker_button">Toggle Sound</button>
+      <audio id="audio_player"></audio>
+    </form>
+
+    <p id="response"></p>
+  </div>
+  {% if user_input %}
+  <div>
+    <p><strong>User:</strong> {{ user_input }}</p>
+    <p><strong>ChatBot:</strong> {{ response }}</p>
+  </div>
+  {% endif %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let isAudioPlaying = false;
+        let audioElement = new Audio();
+
+        document.getElementById("ask-button").addEventListener("click", function() {
+            document.getElementById("ask-form").submit();
+        });
+
+        const speechRecognition = new webkitSpeechRecognition() || window.SpeechRecognition;
+
+        document.getElementById("voice_input_button").addEventListener("click", function() {
+            document.getElementById("speaker_text").innerText = "Listening";
+            speechRecognition.start();
+        });
+
+        speechRecognition.onresult = function(event) {
+            document.getElementById("user_input").value = event.results[0][0].transcript;
+            document.getElementById("ask-form").submit(); // Submit the form when voice input is recognized
+        };
+
+        document.getElementById("speaker_button").addEventListener("click", function() {
+            toggleAudio();
+        });
+
+        function toggleAudio() {
+            isAudioPlaying = !isAudioPlaying;
+            const responseText = document.getElementById("response").innerText;
+
+            if (isAudioPlaying) {
+                playAudio(responseText);
+            } else {
+                audioElement.pause();
+                audioElement.currentTime = 0;
+            }
+        }
+
+        function playAudio(responseText) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/play_audio");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("response=" + responseText);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const audio_data = xhr.responseText;
+                    audioElement.src = "data:audio/mpeg;base64," + audio_data;
+                    audioElement.play()
+                        .then(() => {
+                            // Audio playback has started
+                        })
+                        .catch(error => {
+                            console.error("Error playing audio:", error);
+                            isAudioPlaying = false;
+                        });
+                } else {
+                    console.error("Error loading audio data: " + xhr.statusText);
+                    isAudioPlaying = false;
+                }
+            };
+        }
+
+        document.getElementById("user_input").addEventListener("keypress", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault(); // Prevent the form from submitting on Enter
+                const user_input = document.getElementById("user_input").value;
+                document.getElementById("ask-form").submit();
+            }
+        });
+
+        document.getElementById("response").addEventListener("DOMSubtreeModified", function() {
+            if (isAudioPlaying) {
+                playAudio(document.getElementById("response").innerText);
+            }
+        });
+    });
+</script>
+
+</body>
+</html> -->
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatBot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #chatbot {
+      width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #user_input {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    #ask-button,
+    #voice_input_button,
+    #speaker_button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #speaker_button {
+      display: block;
+      margin: 0 auto;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    #speaker_text {
+      display: block;
+      margin-top: 10px;
+    }
+
+    #response {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbot">
+    <h1>ChatBot</h1>
+    <form action="/ask" method="POST" id="ask-form">
+      <input type="text" name="user_input" id="user_input" placeholder="Ask a question...">
+      <button type="submit" id="ask-button">Ask</button>
+      <button type="button" id="voice_input_button">Voice Input</button>
+      <button type="button" id="speaker_button">
+        <img src="/static/speaker.png" alt="Speaker Icon">
+        <span id="speaker_text">Play Audio</span>
+      </button>
+      <audio id="audio_player"></audio>
+    </form>
+
+    <p id="response"></p>
+  </div>
+  {% if user_input %}
+  <div>
+    <p><strong>User:</strong> {{ user_input }}</p>
+    <p><strong>ChatBot:</strong> {{ response }}</p>
+  </div>
+  {% endif %}
+  <script>
+    let isAudioPlaying = false;
+    document.getElementById("ask-button").addEventListener("click", function() {
+        document.getElementById("ask-form").submit();
+    });
+
+    const speechRecognition = new webkitSpeechRecognition() || window.SpeechRecognition;
+
+    document.getElementById("voice_input_button").addEventListener("click", function() {
+        document.getElementById("speaker_text").innerText = "Listening";
+        speechRecognition.start();
+    });
+
+    speechRecognition.onresult = function(event) {
+        document.getElementById("user_input").value = event.results[0][0].transcript;
+        document.getElementById("ask-form").submit(); // Submit the form when voice input is recognized
+    };
+
+    function playAudio() {
+        if (!isAudioPlaying) { // Check if audio is not already playing
+            isAudioPlaying = true; // Set the flag to indicate audio is playing
+            const audio_player = document.getElementById("audio_player");
+            const responseText = document.getElementById("response").innerText;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/play_audio");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("response=" + responseText);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const audio_data = xhr.responseText;
+                    audio_player.src = "data:audio/mpeg;base64," + audio_data;
+                    audio_player.play();
+                } else {
+                    console.error("Error playing audio: " + xhr.statusText);
+                }
+                isAudioPlaying = false; // Reset the flag when audio playback is complete
+            };
+        }
+    }
+
+    document.getElementById("speaker_button").addEventListener("click", function() {
+        playAudio();
+    });
+
+
+    document.getElementById("user_input").addEventListener("keypress", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault(); // Prevent the form from submitting on Enter
+            const user_input = document.getElementById("user_input").value;
+            document.getElementById("ask-form").submit();
+        }
+    });
+
+    document.getElementById("response").addEventListener("DOMSubtreeModified", function() {
+        document.getElementById("chatbot").scrollTo(0, document.getElementById("chatbot").scrollHeight);
+    });
+  </script>
+</body>
+</html>
+
+

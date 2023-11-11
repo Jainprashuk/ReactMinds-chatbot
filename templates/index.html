@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.8.10/tailwind.min.css">
+    <title>Chatbot</title>
+</head>
+<body>
+    
+    
+    <div class="chatbot-container">
+        <header class="chatbot-header">
+            <h1 class="chatbot-heading">Chatbot</h1>
+            <p class="chatbot-paragraph">Ask any query related to our website</p>
+        </header>
+        <form class="chatbot-form" method="POST" action="/ask">
+            <div class="input-group">
+                <input type="text" id="user_input" name="user_input" placeholder="Ask a question...">
+                <button class="chatbot-button" type="submit">Ask</button>
+                <button type="submit" class="ask-button">Ask</button>
+                <button type="submit" id="voice_input_button">Voice Input</button>
+            </div>
+        </form>
+        <div class="chat">
+            {% if user_input %}
+                <div class="user-message">{{ user_input }}</div>
+                <div class="bot-message">{{ response }}</div>
+            {% endif %}
+        </div>
+        <!-- Embed the chatbot using the iframe code -->
+        <!-- <iframe src="https://sturdy-space-umbrella-x5w7pqqj774ghjvq-5000.app.github.dev/ask" width="400" height="600"></iframe> -->
+    </div>
+    
+
+    <script>
+        document.querySelector(".ask-button").addEventListener("click", function() {
+            document.querySelector("#ask form").submit();
+        });
+
+        const speechRecognition = new webkitSpeechRecognition() || window.SpeechRecognition;
+
+        document.getElementById("voice_input_button").addEventListener("click", function() {
+            document.getElementById("voice_input_button").disabled = true; // Disable the button during recognition
+            document.getElementById("voice_input_button").textContent = "Listening...";
+            speechRecognition.start();
+        });
+
+        speechRecognition.onresult = function(event) {
+            const userInputField = document.getElementById("user_input");
+            userInputField.value = event.results[0][0].transcript;
+            document.getElementById("voice_input_button").textContent = "Voice Input";
+            document.getElementById("voice_input_button").disabled = false; // Enable the button after recognition
+        };
+
+        // Add a listener to the `user_input` input element to submit the form when the user enters a question and presses enter.
+        document.getElementById("user_input").addEventListener("keypress", function(event) {
+            if (event.keyCode === 13) {
+                document.querySelector("#ask form").submit();
+            }
+        });
+
+        // Add a listener to the chatbot response to scroll to the bottom of the chatbot window when the response is updated.
+        document.getElementById("response").addEventListener("DOMSubtreeModified", function() {
+            document.getElementById("chatbot").scrollTo(0, document.getElementById("chatbot").scrollHeight);
+        });
+    </script>
+</body>
+</html>
